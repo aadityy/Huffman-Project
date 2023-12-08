@@ -1,0 +1,32 @@
+
+
+
+
+
+
+CC=clang
+debug:   CFLAGS=-Wall -Wextra -Wstrict-prototypes -Werror -pedantic -gdwarf
+release: CFLAGS=-Wall -Wextra -Wstrict-prototypes -Werror -pedantic
+LDFLAGS=-lm
+
+EXEC1 = huff bwtest pqtest nodetest
+OBJS= node.o bitwriter.o pq.o io-$(shell uname -m).a
+
+.PHONY: all debug release clean
+
+all: $(EXEC1)
+
+release: $(EXEC1)
+
+$(EXEC1): % : $(OBJS) %.o
+	$(CC) $(LDFLAGS) -o $@ $^
+
+%.o : %.c
+	$(CC) $(CFLAGS) -c $<
+
+clean:
+	rm -f $(EXEC1)
+	rm -f *.o
+
+format:
+	clang-format -i --style=file *.[ch]
